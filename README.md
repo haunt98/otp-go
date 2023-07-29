@@ -11,6 +11,7 @@ OTP cli written in go
   - [ ] Add, get, list, delete
   - [ ] Support master password
   - [ ] Save encrypted data using sqlite3 in `~/.local/share`
+- [ ] Auto paste in clipboard
 
 ## Thanks
 
