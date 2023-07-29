@@ -14,5 +14,6 @@ OTP cli written in go
 - [rsc/2fa](https://github.com/rsc/2fa)
 - [gokyle/hotp](https://github.com/gokyle/hotp)
 - [fosskers/totp](https://github.com/fosskers/totp)
+- [zalopay-oss/tokeny](https://github.com/zalopay-oss/tokeny)
 - [susam/mintotp](https://github.com/susam/mintotp)
 - [yitsushi/totp-cli](https://github.com/yitsushi/totp-cli)
