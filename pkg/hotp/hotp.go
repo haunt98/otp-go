@@ -5,16 +5,24 @@ import (
 	"crypto/sha1"
 	"encoding/binary"
 	"fmt"
+	"hash"
+	"time"
 )
 
 // https://datatracker.ietf.org/doc/html/rfc4226
-// Copy code, idea from https://github.com/rsc/2fa
+func HOTP(key []byte, counter uint64, digits int) (int, error) {
+	// RFC shows HOTP use SHA1
+	return hotpByCustomHash(sha1.New, key, counter, digits)
+}
+
+// HOTP with custom hash algorithm
 // counter: C
 // key: K
 // digits: 6 to 8
-func HOTP(key []byte, counter uint64, digits int) (int, error) {
-	// Step 1: Generate an HMAC-SHA-1 value, HMAC-SHA-1(K,C)
-	h := hmac.New(sha1.New, key)
+// Copy code, idea from https://github.com/rsc/2fa
+func hotpByCustomHash(customHash func() hash.Hash, key []byte, counter uint64, digits int) (int, error) {
+	// Step 1: Generate an hmac value from input algorithm
+	h := hmac.New(customHash, key)
 
 	if err := binary.Write(h, binary.BigEndian, counter); err != nil {
 		return 0, fmt.Errorf("binary: failed to write counter: %w", err)
@@ -48,4 +56,15 @@ func HOTP(key []byte, counter uint64, digits int) (int, error) {
 	}
 
 	return int(binCode % d10), nil
+}
+
+// https://datatracker.ietf.org/doc/html/rfc6238
+// Extension of HOTP
+// timeStep: X
+// Assume T0 = 0
+func TOTP(customHash func() hash.Hash, key []byte, t time.Time, timeStep, digits int) (int, error) {
+	// T = (Current Unix time - T0) / X
+	counter := uint64(t.Unix()) / uint64(timeStep)
+
+	return hotpByCustomHash(customHash, key, counter, digits)
 }
