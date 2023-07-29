@@ -7,6 +7,10 @@ OTP cli written in go
 - [x] Implement [HOTP](https://datatracker.ietf.org/doc/html/rfc4226)
 - [x] Implement [TOTP](https://datatracker.ietf.org/doc/html/rfc6238)
 - [ ] [Aegis Vault](https://github.com/beemdevelopment/Aegis/blob/master/docs/vault.md)
+- [ ] Cli with basic command
+  - [ ] Add, get, list, delete
+  - [ ] Support master password
+  - [ ] Save encrypted data using sqlite3 in `~/.local/share`
 
 ## Thanks
 
