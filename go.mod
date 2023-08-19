@@ -3,6 +3,7 @@ module github.com/haunt98/otp-go
 go 1.20
 
 require (
+	github.com/buger/jsonparser v1.1.1
 	github.com/dgraph-io/badger/v4 v4.2.0
 	github.com/stretchr/testify v1.8.4
 	github.com/urfave/cli/v2 v2.25.7

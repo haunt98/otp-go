@@ -14,7 +14,7 @@ type EntryData struct {
 	ID        string `json:"id,omitempty"`
 	Name      string `json:"name,omitempty"`
 	Issuer    string `json:"issuer,omitempty"`
-	EntryType string `json:"entry_type,omitempty"`
+	EntryType string `json:"type,omitempty"`
 }
 
 type TOTPData struct {

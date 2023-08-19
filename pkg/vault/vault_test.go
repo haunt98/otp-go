@@ -36,10 +36,16 @@ func TestVaultSuite(t *testing.T) {
 
 func (s *VaultSuite) Test() {
 	data := &EntryData{
+		OTPData: &TOTPData{
+			Secret:        "secret",
+			Algo:          "algo",
+			Digits:        1,
+			PeriodSeconds: 2,
+		},
 		ID:        "id",
 		Name:      "name",
 		Issuer:    "issuer",
-		EntryType: "entry_type",
+		EntryType: EntryTypeTOTP,
 	}
 
 	gotErr := s.vault.SaveEntry(data)

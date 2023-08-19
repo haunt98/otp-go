@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/buger/jsonparser"
 	"github.com/dgraph-io/badger/v4"
 )
 
@@ -19,6 +20,7 @@ const (
 var (
 	ErrMasterKeyTooShort = fmt.Errorf("master key must be at least %d bytes", badgerKeyMinBytes)
 	ErrKeyNotFound       = errors.New("key not found")
+	ErrInvalidValue      = errors.New("invalid value")
 )
 
 type Vault struct {
@@ -71,6 +73,7 @@ func (v *Vault) SaveEntry(data *EntryData) error {
 
 func (v *Vault) GetEntry(id string) (*EntryData, error) {
 	data := &EntryData{}
+
 	if err := v.badgerDB.View(func(txn *badger.Txn) error {
 		item, err := txn.Get(v.getKeyEntry(id))
 		if err != nil {
@@ -82,6 +85,20 @@ func (v *Vault) GetEntry(id string) (*EntryData, error) {
 		}
 
 		if err := item.Value(func(val []byte) error {
+			// Feel like a hack
+			// I use type to detect otp data
+			entryType, err := jsonparser.GetString(val, "type")
+			if err != nil {
+				return fmt.Errorf("jsonparser: failed to get string: %w", err)
+			}
+
+			switch entryType {
+			case EntryTypeTOTP:
+				data.OTPData = &TOTPData{}
+			default:
+				return ErrInvalidValue
+			}
+
 			if err := json.Unmarshal(val, data); err != nil {
 				return fmt.Errorf("json: failed to unmarshal: %w", err)
 			}
