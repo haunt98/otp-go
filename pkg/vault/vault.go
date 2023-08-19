@@ -2,7 +2,6 @@ package vault
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 
 	"github.com/dgraph-io/badger/v4"
@@ -16,7 +15,7 @@ const (
 	badgerKeyEntryPrefix = "entry:"
 )
 
-var ErrMasterKeyTooShort = errors.New(fmt.Sprintf("master key must be at least %d bytes", badgerKeyMinBytes))
+var ErrMasterKeyTooShort = fmt.Errorf("master key must be at least %d bytes", badgerKeyMinBytes)
 
 type Vault struct {
 	badgerDB *badger.DB
