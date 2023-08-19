@@ -1,0 +1,97 @@
+package vault
+
+import (
+	"encoding/json"
+	"errors"
+	"fmt"
+
+	"github.com/dgraph-io/badger/v4"
+)
+
+// 2MB
+const (
+	badgerIndexCacheSize = 2 << 20
+	badgerKeyMinBytes    = 32
+
+	badgerKeyEntryPrefix = "entry:"
+)
+
+var ErrMasterKeyTooShort = errors.New(fmt.Sprintf("master key must be at least %d bytes", badgerKeyMinBytes))
+
+type Vault struct {
+	badgerDB *badger.DB
+}
+
+func NewVault(path, masterKey string) (*Vault, error) {
+	badgerKey := []byte(masterKey)
+	if len(badgerKey) < badgerKeyMinBytes {
+		return nil, ErrMasterKeyTooShort
+	}
+
+	badgerOpt := badger.DefaultOptions(path).
+		WithEncryptionKey(badgerKey[:32]).
+		WithIndexCacheSize(badgerIndexCacheSize)
+
+	badgerDB, err := badger.Open(badgerOpt)
+	if err != nil {
+		return nil, fmt.Errorf("badger: failed to open %s: %w", path, err)
+	}
+
+	return &Vault{
+		badgerDB: badgerDB,
+	}, nil
+}
+
+func (v *Vault) SaveEntry(data *EntryData) error {
+	// Ignore empty data
+	if data == nil {
+		return nil
+	}
+
+	if err := v.badgerDB.Update(func(txn *badger.Txn) error {
+		dataBytes, err := json.Marshal(data)
+		if err != nil {
+			return fmt.Errorf("json: failed to marshal: %w", err)
+		}
+
+		if err := txn.Set([]byte(v.getKeyEntry(data.ID)), dataBytes); err != nil {
+			return fmt.Errorf("badger: failed to set: %w", err)
+		}
+
+		return nil
+	}); err != nil {
+		return fmt.Errorf("badger: failed to update: %w", err)
+	}
+
+	return nil
+}
+
+func (v *Vault) GetEntry(id string) (*EntryData, error) {
+	data := &EntryData{}
+	if err := v.badgerDB.View(func(txn *badger.Txn) error {
+		item, err := txn.Get([]byte(v.getKeyEntry(id)))
+		if err != nil {
+			return fmt.Errorf("badger: failed to get: %w", err)
+		}
+
+		if err := item.Value(func(val []byte) error {
+			if err := json.Unmarshal(val, data); err != nil {
+				return fmt.Errorf("json: failed to unmarshal: %w", err)
+			}
+
+			return nil
+		}); err != nil {
+			return fmt.Errorf("badger: failed to get value: %w", err)
+		}
+
+		return nil
+	}); err != nil {
+		return nil, fmt.Errorf("badger: failed to view: %w", err)
+	}
+
+	return data, nil
+}
+
+func (v *Vault) getKeyEntry(id string) string {
+	return badgerKeyEntryPrefix + id
+}
