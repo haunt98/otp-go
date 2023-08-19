@@ -2,6 +2,7 @@ package vault
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/dgraph-io/badger/v4"
@@ -15,7 +16,10 @@ const (
 	badgerKeyEntryPrefix = "entry:"
 )
 
-var ErrMasterKeyTooShort = fmt.Errorf("master key must be at least %d bytes", badgerKeyMinBytes)
+var (
+	ErrMasterKeyTooShort = fmt.Errorf("master key must be at least %d bytes", badgerKeyMinBytes)
+	ErrKeyNotFound       = errors.New("key not found")
+)
 
 type Vault struct {
 	badgerDB *badger.DB
@@ -70,6 +74,10 @@ func (v *Vault) GetEntry(id string) (*EntryData, error) {
 	if err := v.badgerDB.View(func(txn *badger.Txn) error {
 		item, err := txn.Get(v.getKeyEntry(id))
 		if err != nil {
+			if errors.Is(err, badger.ErrKeyNotFound) {
+				return errors.Join(ErrKeyNotFound, err)
+			}
+
 			return fmt.Errorf("badger: failed to get: %w", err)
 		}
 
@@ -94,6 +102,10 @@ func (v *Vault) GetEntry(id string) (*EntryData, error) {
 func (v *Vault) DeleteEntry(id string) error {
 	if err := v.badgerDB.Update(func(txn *badger.Txn) error {
 		if err := txn.Delete(v.getKeyEntry(id)); err != nil {
+			if errors.Is(err, badger.ErrKeyNotFound) {
+				return errors.Join(ErrKeyNotFound, err)
+			}
+
 			return fmt.Errorf("badger: failed to delete: %w", err)
 		}
 

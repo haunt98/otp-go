@@ -54,4 +54,5 @@ func (s *VaultSuite) Test() {
 
 	_, gotErr = s.vault.GetEntry(data.ID)
 	s.True(errors.Is(gotErr, badger.ErrKeyNotFound))
+	s.True(errors.Is(gotErr, ErrKeyNotFound))
 }
