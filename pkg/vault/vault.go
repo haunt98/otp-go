@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/buger/jsonparser"
 	"github.com/dgraph-io/badger/v4"
 )
 
@@ -85,14 +84,14 @@ func (v *Vault) GetEntry(id string) (*EntryData, error) {
 		}
 
 		if err := item.Value(func(val []byte) error {
-			// Feel like a hack
-			// I use type to detect otp data
-			entryType, err := jsonparser.GetString(val, "type")
-			if err != nil {
-				return fmt.Errorf("jsonparser: failed to get string: %w", err)
+			if err := json.Unmarshal(val, data); err != nil {
+				return fmt.Errorf("json: failed to unmarshal: %w", err)
 			}
 
-			switch entryType {
+			// Feel like a hack
+			// I use type to detect otp data
+			// Side effect is json.Unmarshal 2 times
+			switch data.EntryType {
 			case EntryTypeTOTP:
 				data.OTPData = &TOTPData{}
 			default:
