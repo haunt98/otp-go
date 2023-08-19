@@ -1,7 +1,8 @@
 package main
 
-import "fmt"
+import "github.com/haunt98/otp-go/pkg/cli"
 
 func main() {
-	fmt.Println("Hello")
+	app := cli.NewApp()
+	app.Run()
 }
