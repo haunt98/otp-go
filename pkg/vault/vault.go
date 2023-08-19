@@ -54,7 +54,7 @@ func (v *Vault) SaveEntry(data *EntryData) error {
 			return fmt.Errorf("json: failed to marshal: %w", err)
 		}
 
-		if err := txn.Set([]byte(v.getKeyEntry(data.ID)), dataBytes); err != nil {
+		if err := txn.Set(v.getKeyEntry(data.ID), dataBytes); err != nil {
 			return fmt.Errorf("badger: failed to set: %w", err)
 		}
 
@@ -69,7 +69,7 @@ func (v *Vault) SaveEntry(data *EntryData) error {
 func (v *Vault) GetEntry(id string) (*EntryData, error) {
 	data := &EntryData{}
 	if err := v.badgerDB.View(func(txn *badger.Txn) error {
-		item, err := txn.Get([]byte(v.getKeyEntry(id)))
+		item, err := txn.Get(v.getKeyEntry(id))
 		if err != nil {
 			return fmt.Errorf("badger: failed to get: %w", err)
 		}
@@ -92,6 +92,20 @@ func (v *Vault) GetEntry(id string) (*EntryData, error) {
 	return data, nil
 }
 
-func (v *Vault) getKeyEntry(id string) string {
-	return badgerKeyEntryPrefix + id
+func (v *Vault) DeleteEntry(id string) error {
+	if err := v.badgerDB.Update(func(txn *badger.Txn) error {
+		if err := txn.Delete(v.getKeyEntry(id)); err != nil {
+			return fmt.Errorf("badger: failed to delete: %w", err)
+		}
+
+		return nil
+	}); err != nil {
+		return fmt.Errorf("badger: failed to update: %w", err)
+	}
+
+	return nil
+}
+
+func (v *Vault) getKeyEntry(id string) []byte {
+	return []byte(badgerKeyEntryPrefix + id)
 }

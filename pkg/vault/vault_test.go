@@ -1,9 +1,11 @@
 package vault
 
 import (
+	"errors"
 	"os"
 	"testing"
 
+	"github.com/dgraph-io/badger/v4"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -46,4 +48,10 @@ func (s *VaultSuite) Test() {
 	gotData, gotErr := s.vault.GetEntry(data.ID)
 	s.NoError(gotErr)
 	s.Equal(data, gotData)
+
+	gotErr = s.vault.DeleteEntry(data.ID)
+	s.NoError(gotErr)
+
+	_, gotErr = s.vault.GetEntry(data.ID)
+	s.True(errors.Is(gotErr, badger.ErrKeyNotFound))
 }
