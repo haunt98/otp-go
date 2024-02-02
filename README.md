@@ -22,3 +22,6 @@ OTP cli written in go
 - [zalopay-oss/tokeny](https://github.com/zalopay-oss/tokeny)
 - [susam/mintotp](https://github.com/susam/mintotp)
 - [yitsushi/totp-cli](https://github.com/yitsushi/totp-cli)
+- [paolostivanin/OTPClient](https://github.com/paolostivanin/OTPClient)
+- [TOTP from scratch](https://codingindex.xyz/2021/03/07/totp-from-scratch/)
+- [2FA TOTP without crappy authenticator apps](https://www.codemadness.org/totp.html)
