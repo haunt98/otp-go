@@ -6,7 +6,7 @@ require (
 	github.com/dgraph-io/badger/v4 v4.2.0
 	github.com/make-go-great/color-go v0.5.0
 	github.com/stretchr/testify v1.9.0
-	github.com/urfave/cli/v2 v2.27.2
+	github.com/urfave/cli/v2 v2.27.3
 )
 
 require (
@@ -29,7 +29,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
-	github.com/xrash/smetrics v0.0.0-20240312152122-5f08fbb34913 // indirect
+	github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1 // indirect
 	go.opencensus.io v0.22.5 // indirect
 	golang.org/x/net v0.23.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect
