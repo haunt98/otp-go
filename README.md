@@ -17,11 +17,14 @@ OTP cli written in go
 
 - [beemdevelopment/Aegis](https://github.com/beemdevelopment/Aegis)
 - [rsc/2fa](https://github.com/rsc/2fa)
-- [gokyle/hotp](https://github.com/gokyle/hotp)
+
 - [fosskers/totp](https://github.com/fosskers/totp)
-- [zalopay-oss/tokeny](https://github.com/zalopay-oss/tokeny)
+- [gokyle/hotp](https://github.com/gokyle/hotp)
+- [paolostivanin/OTPClient](https://github.com/paolostivanin/OTPClient)
+- [pquerna/otp](https://github.com/pquerna/otp)
 - [susam/mintotp](https://github.com/susam/mintotp)
 - [yitsushi/totp-cli](https://github.com/yitsushi/totp-cli)
-- [paolostivanin/OTPClient](https://github.com/paolostivanin/OTPClient)
+- [zalopay-oss/tokeny](https://github.com/zalopay-oss/tokeny)
+
 - [TOTP from scratch](https://codingindex.xyz/2021/03/07/totp-from-scratch/)
 - [2FA TOTP without crappy authenticator apps](https://www.codemadness.org/totp.html)
