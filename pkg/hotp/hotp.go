@@ -64,7 +64,7 @@ func hotpByCustomHash(customHash func() hash.Hash, key []byte, counter uint64, d
 // Assume T0 = 0
 func TOTP(customHash func() hash.Hash, key []byte, t time.Time, timeStep, digits int) (int, error) {
 	// T = (Current Unix time - T0) / X
-	counter := uint64(t.Unix()) / uint64(timeStep)
+	counter := uint64(t.Unix() / int64(timeStep))
 
 	return hotpByCustomHash(customHash, key, counter, digits)
 }

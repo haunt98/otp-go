@@ -1,4 +1,4 @@
-all: tidy test-color lint format build clean
+all: tidy test-color lint format
 
 tidy:
     go mod tidy
@@ -27,9 +27,3 @@ format:
     # go install mvdan.cc/gofumpt@latest
     gofimports -w --company github.com/make-go-great,github.com/haunt98 .
     gofumpt -w -extra .
-
-build:
-    go build ./cmd/gotp
-
-clean:
-    rm -rf gotp
