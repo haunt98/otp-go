@@ -2,7 +2,7 @@ package hotp
 
 import (
 	"crypto/hmac"
-	"crypto/sha1"
+	"crypto/sha1" // nolint:gosec
 	"encoding/binary"
 	"fmt"
 	"hash"
